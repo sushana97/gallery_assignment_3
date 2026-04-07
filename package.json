@@ -1,0 +1,19 @@
+{
+  "name": "gallery_assignment_2",
+  "version": "1.0.0",
+  "description": "WEB322 Gallery Assignment 2",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Sushana",
+  "license": "ISC",
+  "dependencies": {
+    "client-sessions": "^0.8.0",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.2",
+    "line-by-line": "^0.1.6",
+    "linebyline": "^1.3.0",
+    "randomstring": "^1.2.3"
+  }
+}

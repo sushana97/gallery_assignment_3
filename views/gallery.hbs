@@ -1,0 +1,39 @@
+<h2>Fish Image Gallery</h2>
+
+<p>
+Logged in as: <strong>{{username}}</strong> |
+<a href="/logout">Logout</a>
+</p>
+
+<form method="POST" action="/gallery">
+
+<div>
+
+{{#each images}}
+
+    <div>
+        <input type="radio" name="image" value="{{this}}" {{#if @first}}checked{{/if}}>
+        {{this}}
+    </div>
+
+{{/each}}
+
+</div>
+
+<br>
+
+<button type="submit">Show Image</button>
+
+</form>
+
+<hr>
+
+<div>
+
+<img src="/images/{{selectedImage}}" width="400">
+
+<br><br>
+
+<p>{{selectedImage}}</p>
+
+</div>
