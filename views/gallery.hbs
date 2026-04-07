@@ -1,12 +1,19 @@
 <h2>Fish Image Gallery</h2>
 
-<p>Logged in as: {{username}} | <a href="/logout">Logout</a></p>
+<p>
+  Logged in as: {{username}} |
+  <a href="/logout">Logout</a>
+</p>
 
 <form method="GET" action="/order">
   <select name="filename">
-{{#each images}}
-  <option value="{{this}}">{{this}}</option>
-{{/each}}
+
+    {{#each images}}
+      <option value="{{this.filename}}">
+        {{this.filename}}
+      </option>
+    {{/each}}
+
   </select>
 
   <button type="submit">Select</button>
