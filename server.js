@@ -89,18 +89,6 @@ app.get("/gallery", async (req, res) => {
   });
 });
 
-// order page
-app.get("/order", async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("/");
-  }
-
-  const filename = req.query.filename;
-
-  const image = await Image.findOne({ filename: filename });
-
-  res.render("order", { image });
-});
 
 // BUY
 app.post("/buy", async (req, res) => {
