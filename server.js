@@ -39,7 +39,10 @@ app.use(
 );
 
 // handlebars
-app.engine(".hbs", exphbs.engine({ extname: ".hbs" }));
+app.engine(".hbs", exphbs.engine({
+  extname: ".hbs",
+  partialsDir: path.join(__dirname, "views/partials")
+}));
 app.set("view engine", ".hbs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -113,7 +116,7 @@ app.post("/cancel", (req, res) => {
   res.send(`
     <script>
       alert("MAYBE NEXT TIME");
-      window.location.href = "/order?filename=${filename}";
+      window.location.href = "/gallery";
     </script>
   `);
 });
