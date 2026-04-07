@@ -44,9 +44,9 @@ const users = JSON.parse(
 
 // function to get images from MongoDB
 async function getImages() {
-  return await Image.find();
+  const images = await Image.find();
+  return images.map(img => img.filename);
 }
-
 
 // login page
 app.get("/", (req, res) => {
@@ -80,8 +80,8 @@ app.get("/gallery", async (req, res) => {
 
   res.render("gallery", {
     username: req.session.user,
-    images: images.map(img => img.filename),
-    selectedImage: images[0]?.filename
+    images: images,
+    selectedImage: images[0]
   });
 });
 
@@ -96,12 +96,12 @@ app.post("/gallery", async (req, res) => {
   let imageToShow = req.body.image;
 
   if (!imageToShow) {
-    imageToShow = images[0]?.filename;
+    imageToShow = images[0];
   }
 
   res.render("gallery", {
     username: req.session.user,
-    images: images.map(img => img.filename),
+    images: images,
     selectedImage: imageToShow
   });
 });
@@ -113,7 +113,6 @@ app.get("/logout", (req, res) => {
 });
 
 // start server
-app.get("/logout", (req, res) => {
-  req.session.reset();
-  res.redirect("/");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
