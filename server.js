@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const exphbs = require("express-handlebars");
 const sessions = require("client-sessions");
+const orderRoutes = require("./routes/order");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,7 +49,6 @@ const users = JSON.parse(
   fs.readFileSync(path.join(__dirname, "user.json"))
 );
 
-
 // login page
 app.get("/", (req, res) => {
   res.render("login", { error: "" });
@@ -89,35 +89,8 @@ app.get("/gallery", async (req, res) => {
   });
 });
 
-
-// BUY
-app.post("/buy", async (req, res) => {
-  const filename = req.body.filename;
-
-  await Image.updateOne(
-    { filename: filename },
-    { status: "S" }
-  );
-
-  res.send(`
-    <script>
-      alert("SOLD");
-      window.location.href = "/gallery";
-    </script>
-  `);
-});
-
-// CANCEL
-app.post("/cancel", (req, res) => {
-  const filename = req.body.filename;
-
-  res.send(`
-    <script>
-      alert("MAYBE NEXT TIME");
-      window.location.href = "/order?filename=${filename}";
-    </script>
-  `);
-});
+// order routes
+app.use("/", orderRoutes);
 
 // logout
 app.get("/logout", (req, res) => {

@@ -2,20 +2,34 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const imageSchema = new mongoose.Schema({
-  filename: String,
-  description: String,
-  price: Number,
-  status: String
-});
+let Image;
 
-const Image = mongoose.model("Image");
+try {
+  Image = mongoose.model("Image");
+} catch {
+  const imageSchema = new mongoose.Schema({
+    filename: String,
+    description: String,
+    price: Number,
+    status: String
+  });
+
+  Image = mongoose.model("Image", imageSchema);
+}
 
 // GET order page 
 router.get("/order", async (req, res) => {
   const filename = req.query.filename;
 
+  if (!filename) {
+    return res.send("No filename provided");
+  }
+
   const image = await Image.findOne({ filename: filename }).lean();
+
+  if (!image) {
+    return res.send("Image not found");
+  }
 
   res.render("order", { image });
 });
