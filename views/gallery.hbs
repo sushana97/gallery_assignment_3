@@ -1,39 +1,15 @@
 <h2>Fish Image Gallery</h2>
 
-<p>
-Logged in as: <strong>{{username}}</strong> |
-<a href="/logout">Logout</a>
-</p>
+<p>Logged in as: {{username}} | <a href="/logout">Logout</a></p>
 
-<form method="POST" action="/gallery">
+<form method="GET" action="/order">
+  <select name="filename">
+    {{#each images}}
+      <option value="{{this.filename}}">
+        {{this.filename}}
+      </option>
+    {{/each}}
+  </select>
 
-<div>
-
-{{#each images}}
-
-    <div>
-        <input type="radio" name="image" value="{{this}}" {{#if @first}}checked{{/if}}>
-        {{this}}
-    </div>
-
-{{/each}}
-
-</div>
-
-<br>
-
-<button type="submit">Show Image</button>
-
+  <button type="submit">Select</button>
 </form>
-
-<hr>
-
-<div>
-
-<img src="/images/{{selectedImage}}" width="400">
-
-<br><br>
-
-<p>{{selectedImage}}</p>
-
-</div>

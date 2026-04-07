@@ -4,15 +4,21 @@ const path = require("path");
 const fs = require("fs");
 const exphbs = require("express-handlebars");
 const sessions = require("client-sessions");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-mongoose.connect("mongodb+srv://suthayachandran:sush123@cluster0.06cl7ud.mongodb.net/?appName=Cluster0")
+// MongoDB connection
+mongoose.connect("mongodb+srv://suthayachandran:sush123@cluster0.06cl7ud.mongodb.net/galleryDB")
 .then(() => console.log("MongoDB connected"))
 .catch(err => console.log(err));
 
+// UPDATED schema
 const imageSchema = new mongoose.Schema({
-  filename: String
+  filename: String,
+  description: String,
+  price: Number,
+  status: String
 });
 
 const Image = mongoose.model("Image", imageSchema);
@@ -20,7 +26,6 @@ const Image = mongoose.model("Image", imageSchema);
 // middleware
 app.use(express.urlencoded({ extended: true }));
 
-// sessions setup
 app.use(
   sessions({
     cookieName: "session",
@@ -29,32 +34,29 @@ app.use(
   })
 );
 
-// handlebars setup
+// handlebars
 app.engine(".hbs", exphbs.engine({ extname: ".hbs" }));
 app.set("view engine", ".hbs");
 app.set("views", path.join(__dirname, "views"));
 
-// static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// read users
+// users
 const users = JSON.parse(
   fs.readFileSync(path.join(__dirname, "user.json"))
 );
 
-// function to get images from MongoDB
-async function getImages() {
-  const images = await Image.find();
-  return images.map(img => img.filename);
-}
+// ROUTER IMPORT
+const orderRoutes = require("./routes/order");
+app.use("/", orderRoutes);
 
 // login page
 app.get("/", (req, res) => {
   res.render("login", { error: "" });
 });
 
-// handle login
-app.post("/login", (req, res) => {
+// login logic
+app.post("/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
@@ -66,43 +68,22 @@ app.post("/login", (req, res) => {
     return res.render("login", { error: "Invalid password" });
   }
 
+  // RESET all images to Available
+  await Image.updateMany({}, { status: "A" });
+
   req.session.user = username;
   res.redirect("/gallery");
 });
 
 // gallery page
 app.get("/gallery", async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("/");
-  }
+  if (!req.session.user) return res.redirect("/");
 
-  const images = await getImages();
+  const images = await Image.find({ status: "A" });
 
   res.render("gallery", {
     username: req.session.user,
-    images: images,
-    selectedImage: images[0]
-  });
-});
-
-// handle image selection
-app.post("/gallery", async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("/");
-  }
-
-  const images = await getImages();
-
-  let imageToShow = req.body.image;
-
-  if (!imageToShow) {
-    imageToShow = images[0];
-  }
-
-  res.render("gallery", {
-    username: req.session.user,
-    images: images,
-    selectedImage: imageToShow
+    images: images
   });
 });
 

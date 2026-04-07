@@ -1,0 +1,17 @@
+<h2>Order Page</h2>
+
+<img src="/images/{{image.filename}}" width="300">
+
+<p><strong>{{image.filename}}</strong></p>
+<p>{{image.description}}</p>
+<p>Price: ${{image.price}}</p>
+
+<form method="POST" action="/buy">
+  <input type="hidden" name="filename" value="{{image.filename}}">
+  <button type="submit">BUY</button>
+</form>
+
+<form method="POST" action="/cancel">
+  <input type="hidden" name="filename" value="{{image.filename}}">
+  <button type="submit">CANCEL</button>
+</form>
