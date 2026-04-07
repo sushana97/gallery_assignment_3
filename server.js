@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // read users
 const users = JSON.parse(fs.readFileSync(path.join(__dirname, "user.json")));
 
-// function to read images from imagelist.txt
+// function to read images from imageList.txt
 function getImages(callback) {
 
   const filePath = path.join(__dirname, "imageList.txt");
