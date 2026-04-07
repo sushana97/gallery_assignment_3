@@ -34,16 +34,17 @@ const users = JSON.parse(fs.readFileSync(path.join(__dirname, "user.json")));
 // function to read images from imagelist.txt
 function getImages(callback) {
 
-  let images = [];
+  const filePath = path.join(__dirname, "imagelist.txt");
 
-  const lr = new LineByLineReader(path.join(__dirname, "imagelist.txt"))
+  fs.readFile(filePath, "utf8", (err, data) => {
+    if (err) {
+      console.log("Error reading file:", err);
+      return callback([]);
+    }
 
-  lr.on("line", function(line) {
-      images.push(line.trim());
-  });
+    const images = data.split("\n").map(line => line.trim()).filter(line => line !== "");
 
-  lr.on("end", function() {
-      callback(images);
+    callback(images);
   });
 
 }
