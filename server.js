@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const exphbs = require("express-handlebars");
 const sessions = require("client-sessions");
-const orderRoutes = require("./routes/order");
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +23,8 @@ const imageSchema = new mongoose.Schema({
 });
 
 mongoose.model("Image", imageSchema);
+
+const orderRoutes = require("./routes/order");
 
 // middleware
 app.use(express.urlencoded({ extended: true }));
