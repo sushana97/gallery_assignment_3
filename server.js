@@ -34,7 +34,7 @@ const users = JSON.parse(fs.readFileSync(path.join(__dirname, "user.json")));
 // function to read images from imagelist.txt
 function getImages(callback) {
 
-  const filePath = path.join(__dirname, "imagelist.txt");
+  const filePath = path.join(__dirname, "imageList.txt");
 
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
