@@ -15,7 +15,7 @@ const Image = mongoose.model("Image");
 router.get("/order", async (req, res) => {
   const filename = req.query.filename;
 
-  const image = await Image.findOne({ filename });
+  const image = await Image.findOne({ filename: filename }).lean();
 
   res.render("order", { image });
 });

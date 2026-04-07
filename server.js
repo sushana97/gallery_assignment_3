@@ -81,7 +81,7 @@ app.get("/gallery", async (req, res) => {
   }
 
   // only show available images
-  const images = await Image.find({ status: "A" });
+  const images = await Image.find({ status: "A" }).lean();
 
   res.render("gallery", {
     username: req.session.user,
