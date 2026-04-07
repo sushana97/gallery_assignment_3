@@ -9,7 +9,7 @@ const orderRoutes = require("./routes/order");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// connect to MongoDB
+// MongoDB connect
 mongoose.connect("mongodb+srv://suthayachandran:sush123@cluster0.06cl7ud.mongodb.net/galleryDB")
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
@@ -22,7 +22,7 @@ const imageSchema = new mongoose.Schema({
   status: String
 });
 
-const Image = mongoose.model("Image", imageSchema);
+mongoose.model("Image", imageSchema);
 
 // middleware
 app.use(express.urlencoded({ extended: true }));
@@ -41,7 +41,7 @@ app.engine(".hbs", exphbs.engine({ extname: ".hbs" }));
 app.set("view engine", ".hbs");
 app.set("views", path.join(__dirname, "views"));
 
-// static files
+// static
 app.use(express.static(path.join(__dirname, "public")));
 
 // users
@@ -54,10 +54,9 @@ app.get("/", (req, res) => {
   res.render("login", { error: "" });
 });
 
-// login POST
+// login
 app.post("/login", async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const { username, password } = req.body;
 
   if (!users[username]) {
     return res.render("login", { error: "Not a registered username" });
@@ -67,29 +66,57 @@ app.post("/login", async (req, res) => {
     return res.render("login", { error: "Invalid password" });
   }
 
-  // reset all images to available on login
+  const Image = mongoose.model("Image");
+
+  // reset all images
   await Image.updateMany({}, { status: "A" });
 
   req.session.user = username;
   res.redirect("/gallery");
 });
 
-// gallery page
+// gallery
 app.get("/gallery", async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("/");
-  }
+  if (!req.session.user) return res.redirect("/");
 
-  // only show available images
+  const Image = mongoose.model("Image");
+
   const images = await Image.find({ status: "A" }).lean();
 
   res.render("gallery", {
     username: req.session.user,
-    images: images
+    images
   });
 });
 
-// order routes
+// BUY
+app.post("/buy", async (req, res) => {
+  const Image = mongoose.model("Image");
+  const filename = req.body.filename;
+
+  await Image.updateOne({ filename }, { status: "S" });
+
+  res.send(`
+    <script>
+      alert("SOLD");
+      window.location.href = "/gallery";
+    </script>
+  `);
+});
+
+// CANCEL
+app.post("/cancel", (req, res) => {
+  const filename = req.body.filename;
+
+  res.send(`
+    <script>
+      alert("MAYBE NEXT TIME");
+      window.location.href = "/order?filename=${filename}";
+    </script>
+  `);
+});
+
+
 app.use("/", orderRoutes);
 
 // logout
@@ -98,7 +125,7 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-// start server
+// start
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log(`Server running on port ${PORT}`);
 });
